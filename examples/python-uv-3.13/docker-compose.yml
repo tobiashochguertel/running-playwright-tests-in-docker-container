@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-tests-runner
+    environment:
+      PLAYWRIGHT_HEADLESS: 'true'
+      # For testing local apps, use: http://host.docker.internal:3000
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./test-results:/app/test-results
+      - ./htmlreport:/app/htmlreport
+    working_dir: /app

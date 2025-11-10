@@ -1,38 +1,118 @@
 # Running Playwright Tests in Docker Container
 
-## Introduction
-This repository provides a structured way to run Playwright tests within a Docker container. It aims to offer a seamless experience for developers looking to leverage Playwright's capabilities in an isolated environment.
+A curated collection of **production-ready examples** demonstrating how to run Playwright tests in Docker containers across different programming languages and frameworks.
 
-## Repository Structure
-- `docker-compose.yml`: Configuration file for Docker Compose, orchestrating container operations.
-- `Dockerfile`: Instructions for building the Docker image with the necessary dependencies.
-- `tests/`: Directory containing various test scripts organized by functionality.
-- `examples/`: Sample tests demonstrating best practices and usage of Playwright in different scenarios.
+## 🎯 Why This Matters
 
-## Installation
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/tobiashochguertel/running-playwright-tests-in-docker-container.git
-   cd running-playwright-tests-in-docker-container
-   ```
-2. **Build the Docker image:**
-   ```bash
-   docker-compose build
-   ```
+- **Zero UI Interruptions**: Headless browsers run isolated in containers while you develop locally
+- **Reproducible Tests**: Consistent environment across team members and CI/CD pipelines
+- **Language Agnostic**: Examples for Python, TypeScript/Node, Java, and more
+- **Simplified Focus**: Uses public websites (Google, GitHub) so you focus on Docker setup, not app logic
 
-## Usage
-To run the tests within the Docker container, use the following command:
-```bash
-docker-compose up
+---
+
+## 📁 Repository Structure
+
+```
+examples/
+├── python-uv-3.13/          # Python 3.13+ with uv package manager ✅
+├── typescript-node/          # TypeScript + Node.js (coming soon)
+├── java-maven/               # Java + Maven (coming soon)
+└── go-testify/               # Go + Testify (coming soon)
+
+docs/
+├── ARCHITECTURE.md           # High-level design & Docker setup
+├── BEST_PRACTICES.md         # Testing patterns & tips
+└── TROUBLESHOOTING.md        # Common issues & solutions
 ```
 
-This command will start the container and execute all tests defined in the `tests` directory.
+---
 
-### Running Specific Tests
-You can also execute specific test files by modifying the command in the `docker-compose.yml` file or by directly running the Docker container with parameters.
+## 🚀 Quick Start
 
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
+### Python 3.13+ with `uv`
 
-## License
-This repository is licensed under the MIT License. See the LICENSE file for more information.
+The fastest way to get running:
+
+```bash
+git clone https://github.com/tobiashochguertel/running-playwright-tests-in-docker-container.git
+cd running-playwright-tests-in-docker-container/examples/python-uv-3.13
+
+# Build and run tests in Docker
+make build
+make test
+```
+
+**See [Python Example →](./examples/python-uv-3.13/README.md)**
+
+---
+
+## 📚 All Examples
+
+| Language | Framework | Status | Docs |
+|----------|-----------|--------|------|
+| **Python** | 3.13+ + uv | ✅ Ready | [View →](./examples/python-uv-3.13/) |
+| **TypeScript** | Node.js + Jest | 🔄 Coming | [View →](./examples/typescript-node/) |
+| **Java** | Maven + JUnit | 🔄 Coming | [View →](./examples/java-maven/) |
+| **Go** | Testify | 🔄 Coming | [View →](./examples/go-testify/) |
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────────────────┐
+│   Your macOS/Linux Dev      │
+│  • IDE • Code Changes       │
+│  • Local Workflow Intact    │
+└──────────────┬──────────────┘
+               │ Docker API
+               ▼
+┌─────────────────────────────┐
+│   Docker Container          │
+│  • Headless Browsers        │
+│  • Test Runner              │
+│  • No UI Interruptions      │
+└─────────────────────────────┘
+```
+
+For detailed architecture, see [ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
+---
+
+## 📖 Key Documentation
+
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — System design, Docker setup deep dive
+- **[BEST_PRACTICES.md](./docs/BEST_PRACTICES.md)** — Testing patterns, CI/CD integration
+- **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** — Common issues & solutions
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — How to add new language examples
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! To add a new language example:
+
+1. Create a folder in `examples/` named `{language}-{framework}`
+2. Add a `README.md` with setup & usage instructions
+3. Include `Dockerfile`, `docker-compose.yml`, and working tests
+4. Submit a PR—see [CONTRIBUTING.md](./CONTRIBUTING.md) for details
+
+---
+
+## 📝 License
+
+MIT License — see [LICENSE](./LICENSE) for details.
+
+---
+
+## 🔗 Resources
+
+- **[Playwright Documentation](https://playwright.dev/)** — Official docs & API reference
+- **[Docker Documentation](https://docs.docker.com/)** — Container & Docker Compose guides
+- **[uv Package Manager](https://docs.astral.sh/uv/)** — Fast Python package manager
+- **[pytest](https://docs.pytest.org/)** — Python testing framework
+
+---
+
+**Ready to get started?** Pick an example above and dive in! 🚀

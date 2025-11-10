@@ -1,0 +1,21 @@
+[project]
+name = "playwright-tests"
+version = "0.1.0"
+description = "Playwright tests in Docker with Python 3.13+ and uv"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [{ name = "Tobias Hochgürtel", email = "tobias@example.com" }]
+dependencies = ["pytest>=8.0.0", "pytest-asyncio>=0.24.0", "pytest-html>=4.1.0"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = ["asyncio"]
+addopts = "-v --tb=short --html=htmlreport/report.html --self-contained-html"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
