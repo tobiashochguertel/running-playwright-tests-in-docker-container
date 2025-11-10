@@ -4,8 +4,17 @@ version = "0.1.0"
 description = "Playwright tests in Docker with Python 3.13+ and uv"
 readme = "README.md"
 requires-python = ">=3.13"
-authors = [{ name = "Tobias Hochgürtel", email = "tobias@example.com" }]
-dependencies = ["pytest>=8.0.0", "pytest-asyncio>=0.24.0", "pytest-html>=4.1.0"]
+authors = [
+  { name = "Tobias Hochgürtel", email = "tobias.hochguertel@googlemail.com" },
+]
+dependencies = [
+  "playwright==1.55.0",
+  "pytest>=9.0.0",
+  "pytest-asyncio>=1.3.0",
+  "pytest-html>=4.1.1",
+  "pytest-timeout>=2.4.0",
+  #
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -14,8 +23,33 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 markers = ["asyncio"]
-addopts = "-v --tb=short --html=htmlreport/report.html --self-contained-html"
+# Always use verbose output for better debugging in Docker
+# Include short traceback format, HTML report, and real-time output
+addopts = "-v --tb=short --html=htmlreport/report.html --self-contained-html -ra"
+# Show all test outcomes: passed, failed, skipped, errors, xfailed, xpassed
+# Timeout each test to prevent hanging (30 seconds per test)
+timeout = 30
+log_cli = true
+log_cli_level = "INFO"
 
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"
+
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
+
+[tool.uv]
+# READ: https://docs.astral.sh/uv/reference/settings/#required-environments
+# before settings properties which might not be available on all platforms or even exist!
+# The following properties are well know to not exist:
+# - prefers-wheels
+#
+# Require that the package is available for macOS ARM and x86 (Intel).
+required-environments = [
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "sys_platform == 'darwin' and platform_machine == 'x86_64'",
+]
+# Prefer prebuilt wheels to avoid compilation of C extensions like greenlet
+# prefers-wheels = true
