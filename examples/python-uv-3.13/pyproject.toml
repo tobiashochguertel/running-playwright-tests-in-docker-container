@@ -27,8 +27,9 @@ markers = ["asyncio"]
 # Include short traceback format, HTML report, and real-time output
 addopts = "-v --tb=short --html=htmlreport/report.html --self-contained-html -ra"
 # Show all test outcomes: passed, failed, skipped, errors, xfailed, xpassed
-# Timeout each test to prevent hanging (30 seconds per test)
-timeout = 30
+# Timeout each test to prevent hanging (120 seconds per test)
+# Playwright browser startup in Docker can take time, so we use a longer timeout
+timeout = 120
 log_cli = true
 log_cli_level = "INFO"
 

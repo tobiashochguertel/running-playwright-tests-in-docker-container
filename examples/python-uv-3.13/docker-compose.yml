@@ -14,14 +14,14 @@ services:
       # - host.docker.internal:host-gateway
     # Explicit command to run pytest with verbose output
     # Can be overridden with: docker-compose run --rm playwright <args>
-    command: pytest -v --tb=short tests/
+    command: pytest -vv --tb=long tests/
     environment:
       PLAYWRIGHT_HEADLESS: 'true'
       # Ensure pytest output is not buffered (real-time log streaming)
       PYTHONUNBUFFERED: '1'
       # For testing local apps, use: http://host.docker.internal:3000
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     volumes:
       - ./tests:/app/tests:ro
       - ./test-results:/app/test-results
