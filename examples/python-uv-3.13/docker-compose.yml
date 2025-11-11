@@ -22,6 +22,8 @@ services:
       PLAYWRIGHT_HEADLESS: 'true'
       # Ensure pytest output is not buffered (real-time log streaming)
       PYTHONUNBUFFERED: '1'
+      # Required for xvfb (virtual display)
+      DISPLAY: ':99'
       # For testing local apps, use: http://host.docker.internal:3000
     # ports:
     #   - 3000:3000

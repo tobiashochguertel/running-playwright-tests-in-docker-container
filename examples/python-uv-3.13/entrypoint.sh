@@ -13,7 +13,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
+# MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
@@ -26,7 +26,7 @@ echo ""
 
 # Show Python version
 echo -e "${BLUE}🐍 Python Version:${NC}"
-uv run python --version 2>&1 | sed 's/^/   /'
+.venv/bin/python --version 2>&1 | sed 's/^/   /'
 echo ""
 
 # Show uv version
@@ -36,22 +36,22 @@ echo ""
 
 # Show pytest version
 echo -e "${BLUE}🧪 pytest Version:${NC}"
-uv run pytest --version 2>&1 | sed 's/^/   /'
+.venv/bin/pytest --version 2>&1 | sed 's/^/   /'
 echo ""
 
 # Show Playwright version
-echo -e "${BLUE}🎭 Playwright Version:${NC}"
-uv run python -c "import playwright; print(f'   Playwright {playwright.__version__}')" 2>&1 || echo "   ${RED}ERROR: Playwright not installed${NC}"
+echo -e "${BLUE}🎭 Playwright:${NC}"
+.venv/bin/python -c "import playwright.sync_api; print('   Playwright installed (sync API available)')" 2>&1 || echo "   ${RED}ERROR: Playwright not installed${NC}"
 echo ""
 
 # Check for Chromium browser
 echo -e "${BLUE}🌐 Browser Installation Check:${NC}"
-if uv run playwright show-browsers 2>&1 | grep -q "chromium"; then
+if .venv/bin/playwright show-browsers 2>&1 | grep -q "chromium"; then
   echo -e "   ${GREEN}✓ Chromium browser installed${NC}"
 else
   echo -e "   ${RED}✗ Chromium browser NOT installed${NC}"
   echo -e "   ${YELLOW}Installing browsers now...${NC}"
-  uv run playwright install chromium --with-deps
+  .venv/bin/playwright install chromium --with-deps
 fi
 echo ""
 
@@ -73,22 +73,40 @@ fi
 echo ""
 
 echo -e "${CYAN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}${BOLD}Starting test execution...${NC}"
+echo -e "${GREEN}${BOLD}Starting Xvfb and test execution...${NC}"
 echo -e "${CYAN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
 echo ""
 
-# Execute command through uv
-# If no arguments, run default pytest command
-# Otherwise, run the provided command through uv
+# Start Xvfb (virtual framebuffer X server) in the background
+# Required for Chromium to run in headless mode on ARM64
+echo -e "${BLUE}🖥️  Starting Xvfb on display :99...${NC}"
+Xvfb :99 -screen 0 1280x1024x24 -ac +extension GLX +render -noreset &
+XVFB_PID=$!
+export DISPLAY=:99
+
+# Wait for Xvfb to be ready
+sleep 2
+echo -e "${GREEN}✓ Xvfb ready (PID: $XVFB_PID)${NC}"
+echo ""
+
+# Execute command directly from venv (not through 'uv run')
+# Note: 'uv run' requires module structure, but this is a test-only project
 if [ $# -eq 0 ]; then
-  exec uv run pytest
+  .venv/bin/pytest
+  EXIT_CODE=$?
 else
   # Check if first argument is pytest-related
   if [[ "$1" == "pytest"* ]] || [[ "$1" == "-"* ]]; then
-    # Run through uv run pytest
-    exec uv run pytest "$@"
+    # Run pytest directly from venv
+    .venv/bin/pytest "$@"
+    EXIT_CODE=$?
   else
-    # For other commands, run through uv run
-    exec uv run "$@"
+    # For other commands, try to run from venv
+    .venv/bin/"$*"
+    EXIT_CODE=$?
   fi
 fi
+
+# Clean up Xvfb
+kill $XVFB_PID 2>/dev/null || true
+exit $EXIT_CODE

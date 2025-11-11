@@ -96,16 +96,13 @@ ENV PATH="$VIRTUAL_ENV/bin:/root/.local/bin:$PATH"
 # Show installed Python version
 RUN python --version && echo "✓ Python ready"
 
-# Install Playwright browsers (Chromium) - this is the heavy part
+# Install Playwright browsers (Firefox) - better ARM64 compatibility
 # We do this in dependencies stage so it's cached
-RUN echo "🌐 Installing Playwright Chromium browser..." && \
-  uv run playwright install chromium --with-deps && \
-  echo "✓ Chromium installed"
-
-# Verify browser installation
-RUN echo "🔍 Verifying browser installation..." && \
-  uv run playwright show-browsers && \
-  echo "✓ Browser verification complete"
+# Firefox typically works more reliably on ARM64/Apple Silicon than Chromium
+# Note: Use .venv/bin/playwright directly since project doesn't have module structure
+RUN echo "🦊 Installing Playwright Firefox browser..." && \
+  .venv/bin/playwright install firefox --with-deps && \
+  echo "✓ Firefox installed successfully"
 
 # ============================================================================
 # Stage 4: Final runtime stage
@@ -121,10 +118,10 @@ WORKDIR /app
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Copy test files and configuration
+# Copy test files
 # This layer rebuilds when tests change, but dependencies are cached
+# Note: pytest config is in pyproject.toml (already copied in dependencies stage)
 COPY tests/ /app/tests/
-COPY pytest.ini /app/pytest.ini
 
 # Verify tests were copied
 RUN echo "📋 Test files:" && \
@@ -142,12 +139,13 @@ ENV UV_CACHE_DIR=/app/.cache/uv
 RUN mkdir -p /app/test-results /app/htmlreport
 
 # Health check - verify pytest and playwright are accessible
+# Note: Use .venv/bin directly since project doesn't have module structure
 RUN echo "🏥 Health check..." && \
-  uv run pytest --version && \
-  uv run python -c "import playwright; print(f'Playwright {playwright.__version__}')" && \
+  .venv/bin/pytest --version && \
+  .venv/bin/python -c "import playwright.sync_api; print('Playwright installed')" && \
   echo "✓ Health check passed"
 
-# Use diagnostic entrypoint that enforces uv execution
+# Use diagnostic entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default: run all tests with verbose output

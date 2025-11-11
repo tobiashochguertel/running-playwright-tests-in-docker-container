@@ -8,26 +8,12 @@ from playwright.async_api import async_playwright, Browser, Page, BrowserContext
 async def browser() -> Browser:
     """Create and manage a browser instance for the test session.
 
-    Configured with Docker-optimized settings:
-    - --no-sandbox: Required for Docker root user execution
-    - --disable-setuid-sandbox: Prevents sandboxing issues in containers
-    - --disable-dev-shm-usage: Prevents shared memory issues in Docker
-    - --disable-gpu: Disables GPU acceleration (not needed for headless)
+    Using Firefox instead of Chromium for better ARM64/Apple Silicon compatibility.
+    Firefox typically works more reliably in Docker on ARM64 architectures.
     """
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
+        browser = await p.firefox.launch(
             headless=True,
-            args=[
-                # Essential for Docker environments
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                # Prevent shared memory issues
-                "--disable-dev-shm-usage",
-                # Performance optimizations for headless
-                "--disable-gpu",
-                "--disable-software-rasterizer",
-                "--disable-extensions",
-            ],
             # Set reasonable timeout for browser launch (30 seconds)
             timeout=30000,
         )
