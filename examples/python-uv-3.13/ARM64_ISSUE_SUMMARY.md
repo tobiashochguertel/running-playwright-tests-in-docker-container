@@ -8,7 +8,7 @@
 
 All browser launches hang indefinitely at:
 
-```
+```log
 File ".../asyncio/unix_events.py", line 931, in _do_waitpid
     pid, status = os.waitpid(expected_pid, 0)
 ```
@@ -164,9 +164,9 @@ This allows AMD64 images to run on Apple Silicon with near-native performance.
 
 ---
 
-**Status**: ❌ Custom Ubuntu-based Docker image **NOT VIABLE** on ARM64
-**Recommendation**: ✅ Switch to official Playwright Docker image
-**Date**: Tue Nov 11 15:51:45 CET 2025
+- **Status**: ❌ Custom Ubuntu-based Docker image **NOT VIABLE** on ARM64
+- **Recommendation**: ✅ Switch to official Playwright Docker image
+- **Date**: Tue Nov 11 15:51:45 CET 2025
 
 ---
 
@@ -211,7 +211,7 @@ This allows AMD64 images to run on Apple Silicon with near-native performance.
 
 # My research
 
-- **Date:**
+- **Date:** Tue Nov 11 20:09:22 CET 2025
 
 ## Related issues descriptions
 
