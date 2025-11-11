@@ -23,7 +23,9 @@ services:
     # ports:
     #   - 3000:3000
     volumes:
-      - ./tests:/app/tests:ro
+      # Tests are copied into image during build, not mounted from host
+      # - ./tests:/app/tests:ro
+      # Output directories for results and reports
       - ./test-results:/app/test-results
       - ./htmlreport:/app/htmlreport
     working_dir: /app

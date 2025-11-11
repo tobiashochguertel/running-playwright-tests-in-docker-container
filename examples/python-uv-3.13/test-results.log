@@ -1,0 +1,86 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 695B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 3.84kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for mcr.microsoft.com/playwright/python:v1.55.0-noble
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 211B done
+#5 DONE 0.0s
+
+#6 [base-deps 1/2] FROM mcr.microsoft.com/playwright/python:v1.55.0-noble@sha256:640d578aae63cfb632461d1b0aecb01414e4e020864ac3dd45a868dc0eff3078
+#6 resolve mcr.microsoft.com/playwright/python:v1.55.0-noble@sha256:640d578aae63cfb632461d1b0aecb01414e4e020864ac3dd45a868dc0eff3078 0.0s done
+#6 DONE 0.0s
+
+#7 [runtime 1/4] WORKDIR /app
+#7 CACHED
+
+#8 [uv-installer 2/2] RUN /root/.local/bin/uv python install
+#8 CACHED
+
+#9 [dependencies 2/4] COPY pyproject.toml .
+#9 CACHED
+
+#10 [uv-installer 1/2] RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+#10 CACHED
+
+#11 [base-deps 2/2] RUN apt-get update && apt-get install -y --no-install-recommends   curl   build-essential   python3   && rm -rf /var/lib/apt/lists/*
+#11 CACHED
+
+#12 [dependencies 4/4] RUN /root/.local/bin/uv sync --refresh --no-install-project
+#12 CACHED
+
+#13 [dependencies 1/4] WORKDIR /app
+#13 CACHED
+
+#14 [dependencies 3/4] RUN python3 --version
+#14 CACHED
+
+#15 [runtime 3/4] RUN chmod +x /app/entrypoint.sh
+#15 CACHED
+
+#16 [runtime 2/4] COPY entrypoint.sh /app/entrypoint.sh
+#16 CACHED
+
+#17 [runtime 4/4] COPY tests/ /app/tests/
+#17 CACHED
+
+#18 exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:dc24b65f46b30deb1c30b771a6fb37b6f1e1712b89ba62a597ce642fbc256591 done
+#18 exporting config sha256:26b63ae2d81a090e150a5f087d58e61362bf7c0e4b63fe00e2230962b8665846 done
+#18 exporting attestation manifest sha256:cd6148c3d4c14e960bc84a68f70b94690c52e520bed4085b10a800acdf9bff2a 0.0s done
+#18 exporting manifest list sha256:36738a8e24edb7deea93db47e55a49516416b2e2f698e42010931748325e0641 done
+#18 naming to docker.io/library/python-uv-313-playwright:latest done
+#18 unpacking to docker.io/library/python-uv-313-playwright:latest done
+#18 DONE 0.1s
+
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+============================= test session starts ==============================
+platform linux -- Python 3.14.0, pytest-9.0.0, pluggy-1.6.0 -- /app/.venv/bin/python
+cachedir: .pytest_cache
+metadata: {'Python': '3.14.0', 'Platform': 'Linux-6.11.11-linuxkit-aarch64-with-glibc2.39', 'Packages': {'pytest': '9.0.0', 'pluggy': '1.6.0'}, 'Plugins': {'html': '4.1.1', 'asyncio': '1.3.0', 'metadata': '3.1.1', 'timeout': '2.4.0'}}
+rootdir: /app
+configfile: pyproject.toml
+plugins: html-4.1.1, asyncio-1.3.0, metadata-3.1.1, timeout-2.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+timeout: 120.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 0 items
+
+---------- Generated html report: file:///app/htmlreport/report.html -----------
+============================ no tests ran in 0.02s =============================
+ERROR: file or directory not found: pytest
+
+

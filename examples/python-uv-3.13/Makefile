@@ -11,7 +11,7 @@ help:
 	@echo "  make clean           - Remove containers and artifacts"
 
 build:
-	docker-compose build --no-cache
+	docker-compose build
 
 test:
 	docker-compose run --rm playwright pytest -v tests/

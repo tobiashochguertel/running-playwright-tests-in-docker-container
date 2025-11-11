@@ -93,4 +93,4 @@ ENV UV_CACHE_DIR=/app/.cache/uv
 
 # Use entrypoint script for flexible argument passing
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["-v", "tests/"]
+CMD ["pytest", "-vv", "--tb=long", "tests/"]
