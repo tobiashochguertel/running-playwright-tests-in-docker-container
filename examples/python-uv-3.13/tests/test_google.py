@@ -10,7 +10,8 @@ class TestGoogleHomepage:
     @pytest.mark.asyncio
     async def test_google_homepage_loads(self, page: Page):
         """Test that Google homepage loads and displays search box."""
-        await page.goto("https://www.google.de", wait_until="networkidle")
+        # Use 'load' instead of 'networkidle' - faster and sufficient for most cases
+        await page.goto("https://www.google.de", wait_until="load")
 
         # Verify page title contains 'Google'
         title = await page.title()
@@ -23,7 +24,7 @@ class TestGoogleHomepage:
     @pytest.mark.asyncio
     async def test_google_search_button_visible(self, page: Page):
         """Test that Google search button is visible on homepage."""
-        await page.goto("https://www.google.de", wait_until="networkidle")
+        await page.goto("https://www.google.de", wait_until="load")
 
         # Find search buttons
         search_button = page.locator("button:has-text('Google Suche')")
@@ -35,7 +36,7 @@ class TestGoogleHomepage:
     @pytest.mark.asyncio
     async def test_google_has_logo(self, page: Page):
         """Test that Google logo is visible on the homepage."""
-        await page.goto("https://www.google.de", wait_until="networkidle")
+        await page.goto("https://www.google.de", wait_until="load")
 
         # Google logo is an image with specific alt text
         logo = page.locator("img[alt='Google']")
@@ -45,7 +46,7 @@ class TestGoogleHomepage:
     @pytest.mark.asyncio
     async def test_google_footer_links_present(self, page: Page):
         """Test that footer links are present on Google homepage."""
-        await page.goto("https://www.google.de", wait_until="networkidle")
+        await page.goto("https://www.google.de", wait_until="load")
 
         # Look for footer links (Über Google, Datenschutz, etc.)
         footer = page.locator("footer")

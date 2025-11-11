@@ -81,7 +81,8 @@ RUN chmod +x /app/entrypoint.sh
 
 # Copy test files
 # This layer rebuilds when tests change, but not when dependencies change
-COPY tests/ /app/tests/
+# COPY tests/ /app/tests/
+RUN mkdir -p /app/tests/
 
 # Set headless mode by default
 ENV PLAYWRIGHT_HEADLESS=true
