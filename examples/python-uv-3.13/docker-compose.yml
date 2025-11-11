@@ -1,12 +1,54 @@
+# Playwright Docker Test Container - Docker Compose Configuration
+#
+# This configuration supports building and running different browser variants
+# using build arguments. Use environment variables or .env file to configure.
+#
+# Build Arguments:
+#   PYTHON_VERSION: Python version to install (default: 3.13)
+#   BROWSER: Browser to install (firefox, chromium, webkit, all - default: firefox)
+#   UV_CACHE_REFRESH: Force uv to refresh cache (true/false - default: false)
+#
+# Environment Variables:
+#   NO_COLORS: Disable colored output (0/1 or false/true - default: 0)
+#   DISPLAY: X11 display number (default: :99)
+#   XVFB_RESOLUTION: Xvfb screen resolution (default: 1280x1024x24)
+#   PYTEST_VERBOSE: Pytest verbosity flag (e.g., -v, -vv, -vvv)
+#   PYTEST_TRACEBACK: Pytest traceback style (short, long, native - default: long)
+#   PLAYWRIGHT_HEADLESS: Run browsers in headless mode (default: true)
+#
+# Usage Examples:
+#   # Default (Firefox browser)
+#   docker-compose up
+#
+#   # Build with Chromium browser
+#   BROWSER=chromium docker-compose build
+#   docker-compose up
+#
+#   # Build with all browsers
+#   BROWSER=all docker-compose build
+#
+#   # Run with custom environment variables
+#   docker-compose run --rm -e PYTEST_VERBOSE=-vvv -e NO_COLORS=1 playwright
+#
+#   # Use specific browser variant profile
+#   docker-compose --profile chromium up
+#
 # READ: https://playwright.dev/python/docs/docker
+
 services:
+  # Default service (Firefox browser)
   playwright:
     build:
       context: .
       dockerfile: Dockerfile
-      # Show build output for debugging
       args:
+        # Build arguments (can be set via environment variables or .env file)
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.13}
+        BROWSER: ${BROWSER:-firefox}
+        UV_CACHE_REFRESH: ${UV_CACHE_REFRESH:-false}
+        # Show build output for debugging
         BUILDKIT_PROGRESS: plain
+    image: playwright-test:firefox-py${PYTHON_VERSION:-3.13}
     container_name: playwright-tests-runner
     init: true
     ipc: 'host'
@@ -19,11 +61,22 @@ services:
     # Override with: docker-compose run --rm playwright <args>
     # Example: docker-compose run --rm playwright -vv tests/test_google.py
     environment:
-      PLAYWRIGHT_HEADLESS: 'true'
-      # Ensure pytest output is not buffered (real-time log streaming)
-      PYTHONUNBUFFERED: '1'
-      # Required for xvfb (virtual display)
-      DISPLAY: ':99'
+      # Playwright configuration
+      PLAYWRIGHT_HEADLESS: ${PLAYWRIGHT_HEADLESS:-true}
+      BROWSER: ${BROWSER:-firefox}
+
+      # Display configuration
+      DISPLAY: ${DISPLAY:-:99}
+      XVFB_RESOLUTION: ${XVFB_RESOLUTION:-1280x1024x24}
+
+      # Pytest configuration
+      PYTEST_VERBOSE: ${PYTEST_VERBOSE:--vv}
+      PYTEST_TRACEBACK: ${PYTEST_TRACEBACK:-long}
+      PYTHONUNBUFFERED: '1' # Real-time log streaming
+
+      # Output configuration
+      NO_COLORS: ${NO_COLORS:-0}
+
       # For testing local apps, use: http://host.docker.internal:3000
     # ports:
     #   - 3000:3000
@@ -38,3 +91,69 @@ services:
     # Set timeout for test execution
     # Docker will kill container if tests take longer than this
     stop_grace_period: 5m
+
+  # Chromium variant (explicit profile)
+  chromium:
+    extends: playwright
+    profiles: ['chromium']
+    build:
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.13}
+        BROWSER: chromium
+        UV_CACHE_REFRESH: ${UV_CACHE_REFRESH:-false}
+        BUILDKIT_PROGRESS: plain
+    image: playwright-test:chromium-py${PYTHON_VERSION:-3.13}
+    container_name: playwright-tests-chromium
+    environment:
+      PLAYWRIGHT_HEADLESS: ${PLAYWRIGHT_HEADLESS:-true}
+      BROWSER: chromium
+      DISPLAY: ${DISPLAY:-:99}
+      XVFB_RESOLUTION: ${XVFB_RESOLUTION:-1280x1024x24}
+      PYTEST_VERBOSE: ${PYTEST_VERBOSE:--vv}
+      PYTEST_TRACEBACK: ${PYTEST_TRACEBACK:-long}
+      PYTHONUNBUFFERED: '1'
+      NO_COLORS: ${NO_COLORS:-0}
+
+  # WebKit variant (explicit profile)
+  webkit:
+    extends: playwright
+    profiles: ['webkit']
+    build:
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.13}
+        BROWSER: webkit
+        UV_CACHE_REFRESH: ${UV_CACHE_REFRESH:-false}
+        BUILDKIT_PROGRESS: plain
+    image: playwright-test:webkit-py${PYTHON_VERSION:-3.13}
+    container_name: playwright-tests-webkit
+    environment:
+      PLAYWRIGHT_HEADLESS: ${PLAYWRIGHT_HEADLESS:-true}
+      BROWSER: webkit
+      DISPLAY: ${DISPLAY:-:99}
+      XVFB_RESOLUTION: ${XVFB_RESOLUTION:-1280x1024x24}
+      PYTEST_VERBOSE: ${PYTEST_VERBOSE:--vv}
+      PYTEST_TRACEBACK: ${PYTEST_TRACEBACK:-long}
+      PYTHONUNBUFFERED: '1'
+      NO_COLORS: ${NO_COLORS:-0}
+
+  # All browsers variant (explicit profile)
+  all-browsers:
+    extends: playwright
+    profiles: ['all']
+    build:
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.13}
+        BROWSER: all
+        UV_CACHE_REFRESH: ${UV_CACHE_REFRESH:-false}
+        BUILDKIT_PROGRESS: plain
+    image: playwright-test:all-py${PYTHON_VERSION:-3.13}
+    container_name: playwright-tests-all
+    environment:
+      PLAYWRIGHT_HEADLESS: ${PLAYWRIGHT_HEADLESS:-true}
+      BROWSER: ${BROWSER:-firefox} # Can be changed at runtime
+      DISPLAY: ${DISPLAY:-:99}
+      XVFB_RESOLUTION: ${XVFB_RESOLUTION:-1280x1024x24}
+      PYTEST_VERBOSE: ${PYTEST_VERBOSE:--vv}
+      PYTEST_TRACEBACK: ${PYTEST_TRACEBACK:-long}
+      PYTHONUNBUFFERED: '1'
+      NO_COLORS: ${NO_COLORS:-0}

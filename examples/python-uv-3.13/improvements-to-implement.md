@@ -231,6 +231,7 @@ Here it could be that `XVFB_PID` is not defined, becaue of a previous error whic
 ------
 
 - Use `shellcheck` to check the `entrypoint.sh` for possible improvements and fix the issues which `shellcheck` reports.
+- Use `hadolint` to check the Dockerfile for best practices and fix the issues which `hadolint` reports.
 - Add comments to the Dockerfile and `entrypoint.sh` where needed to explain the purpose of complex commands or sections for better maintainability.
 - Ensure consistent formatting and indentation throughout the Dockerfile and `entrypoint.sh` for improved readability.
 - Test the Dockerfile and `entrypoint.sh` after making changes to ensure that all functionalities work as expected and that no new issues have been introduced.

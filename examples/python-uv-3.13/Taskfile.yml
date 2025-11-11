@@ -1,0 +1,383 @@
+version: '3'
+
+# Playwright Docker Test Container - Task Automation
+#
+# This Taskfile provides convenient commands for building and running
+# different browser variants of the Playwright test container.
+#
+# Prerequisites:
+#   - go-task installed (https://taskfile.dev/)
+#   - Docker installed and running
+#
+# Usage:
+#   task --list                 # List all available tasks
+#   task build:firefox          # Build firefox variant
+#   task build:chromium         # Build chromium variant
+#   task build:webkit           # Build webkit variant
+#   task build:all              # Build all browser variants
+#   task run:firefox            # Run firefox variant
+#   task test:firefox           # Build and test firefox variant
+#   task clean                  # Remove all built images
+
+env:
+  USER: $USER
+
+vars:
+  IMAGE_ORGANIZATION: '{{.USER}}'
+  IMAGE_NAME: '{{.IMAGE_ORGANIZATION}}/playwright-test'
+  PYTHON_VERSION: '3.13'
+
+tasks:
+  debug:
+    desc: Show current variable values for debugging
+    cmds:
+      - |
+        echo "IMAGE_ORGANIZATION: {{.IMAGE_ORGANIZATION}}"
+        echo "IMAGE_NAME: {{.IMAGE_NAME}}"
+        echo "PYTHON_VERSION: {{.PYTHON_VERSION}}"
+
+  buildx:create:
+    desc: Create and use Docker buildx builder for multi-platform builds
+    cmds:
+      - docker buildx create
+        --name mybuilder --use
+        --driver docker-container
+        --driver-opt default-load=true
+      - docker buildx inspect --bootstrap
+      - docker buildx ls
+    status:
+      # Get the builder named "mybuilder" if it exists
+      - docker buildx ls --format=json | jq -s '.[] | select(.Name == "mybuilder")'
+      # Get the driver used by the builder and compare it with the `docker-container` driver
+      - docker buildx ls --format=json | jq -s '.[] | select(.Name == "mybuilder").Driver == "docker-container"'
+
+  # Build Tasks
+  # ============================================================================
+
+  build:firefox:
+    desc: Build Docker image with Firefox browser
+    cmds:
+      - docker buildx build
+        --build-arg PYTHON_VERSION={{.PYTHON_VERSION}}
+        --build-arg BROWSER=firefox
+        --build-arg UV_CACHE_REFRESH=false
+        -t {{.IMAGE_NAME}}:latest
+        -t {{.IMAGE_NAME}}:firefox-py{{.PYTHON_VERSION}}
+        -t {{.IMAGE_NAME}}:firefox
+        .
+    sources:
+      - Taskfile.yml
+      - Dockerfile
+      - entrypoint.sh
+      - pyproject.toml
+      - tests/**/*.py
+    status:
+      # Get all built images
+      # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
+      # Get the images named "{{.IMAGE_NAME}}:latest" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "latest").Tag == "latest"'
+      # Get the images named "{{.IMAGE_NAME}}:firefox-py{{.PYTHON_VERSION}}" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox-py{{.PYTHON_VERSION}}").Tag == "firefox-py{{.PYTHON_VERSION}}"'
+      # Get the images named "{{.IMAGE_NAME}}:firefox" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox").Tag == "firefox"'
+
+  build:chromium:
+    desc: Build Docker image with Chromium browser
+    cmds:
+      - docker build
+        --build-arg PYTHON_VERSION={{.PYTHON_VERSION}}
+        --build-arg BROWSER=chromium
+        --build-arg UV_CACHE_REFRESH=false
+        -t {{.IMAGE_NAME}}:chromium-py{{.PYTHON_VERSION}}
+        -t {{.IMAGE_NAME}}:chromium
+        .
+    sources:
+      - Taskfile.yml
+      - Dockerfile
+      - entrypoint.sh
+      - pyproject.toml
+      - tests/**/*.py
+    status:
+      # Get all built images
+      # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
+      # Get the images named "{{.IMAGE_NAME}}:chromium-py{{.PYTHON_VERSION}}" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium-py{{.PYTHON_VERSION}}").Tag == "chromium-py{{.PYTHON_VERSION}}"'
+      # Get the images named "{{.IMAGE_NAME}}:chromium" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium").Tag == "chromium"'
+
+  build:webkit:
+    desc: Build Docker image with WebKit browser
+    cmds:
+      - docker build
+        --build-arg PYTHON_VERSION={{.PYTHON_VERSION}}
+        --build-arg BROWSER=webkit
+        --build-arg UV_CACHE_REFRESH=false
+        -t {{.IMAGE_NAME}}:webkit-py{{.PYTHON_VERSION}}
+        -t {{.IMAGE_NAME}}:webkit
+        .
+    sources:
+      - Taskfile.yml
+      - Dockerfile
+      - entrypoint.sh
+      - pyproject.toml
+      - tests/**/*.py
+    status:
+      # Get all built images
+      # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
+      # Get the images named "{{.IMAGE_NAME}}:webkit-py{{.PYTHON_VERSION}}" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit-py{{.PYTHON_VERSION}}").Tag == "webkit-py{{.PYTHON_VERSION}}"'
+      # Get the images named "{{.IMAGE_NAME}}:webkit" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit").Tag == "webkit"'
+
+  build:all-browsers:
+    desc: Build Docker image with all browsers (firefox, chromium, webkit)
+    cmds:
+      - docker build
+        --build-arg PYTHON_VERSION={{.PYTHON_VERSION}}
+        --build-arg BROWSER=all
+        --build-arg UV_CACHE_REFRESH=false
+        -t {{.IMAGE_NAME}}:all-py{{.PYTHON_VERSION}}
+        -t {{.IMAGE_NAME}}:all
+        .
+    sources:
+      - Taskfile.yml
+      - Dockerfile
+      - entrypoint.sh
+      - pyproject.toml
+      - tests/**/*.py
+    status:
+      # Get all built images
+      # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
+      # Get the images named "{{.IMAGE_NAME}}:all-py{{.PYTHON_VERSION}}" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all-py{{.PYTHON_VERSION}}").Tag == "all-py{{.PYTHON_VERSION}}"'
+      # Get the images named "{{.IMAGE_NAME}}:all" if it exists
+      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all").Tag == "all"'
+
+  build:all:
+    desc: Build all browser variants (firefox, chromium, webkit, all-browsers)
+    cmds:
+      - task: build:firefox
+      - task: build:chromium
+      - task: build:webkit
+      - task: build:all-browsers
+
+  build:refresh:
+    desc: Build with UV cache refresh enabled (forces dependency updates)
+    cmds:
+      - docker build
+        --build-arg PYTHON_VERSION={{.PYTHON_VERSION}}
+        --build-arg BROWSER=firefox
+        --build-arg UV_CACHE_REFRESH=true
+        --no-cache
+        -t {{.IMAGE_NAME}}:firefox-py{{.PYTHON_VERSION}}
+        -t {{.IMAGE_NAME}}:firefox
+        -t {{.IMAGE_NAME}}:latest
+        .
+
+  # Run Tasks
+  # ============================================================================
+
+  run:firefox:
+    desc: Run tests with Firefox browser
+    deps: [build:firefox]
+    cmds:
+      - docker run --rm
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:firefox
+
+  run:chromium:
+    desc: Run tests with Chromium browser
+    deps: [build:chromium]
+    cmds:
+      - docker run --rm
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:chromium
+
+  run:webkit:
+    desc: Run tests with WebKit browser
+    deps: [build:webkit]
+    cmds:
+      - docker run --rm
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:webkit
+
+  run:all:
+    desc: Run tests with all browser variants sequentially
+    cmds:
+      - task: run:firefox
+      - task: run:chromium
+      - task: run:webkit
+
+  # Test Tasks (Build + Run)
+  # ============================================================================
+
+  test:firefox:
+    desc: Build and test Firefox variant
+    cmds:
+      - task: build:firefox
+      - task: run:firefox
+
+  test:chromium:
+    desc: Build and test Chromium variant
+    cmds:
+      - task: build:chromium
+      - task: run:chromium
+
+  test:webkit:
+    desc: Build and test WebKit variant
+    cmds:
+      - task: build:webkit
+      - task: run:webkit
+
+  test:all:
+    desc: Build and test all browser variants
+    cmds:
+      - task: build:all
+      - task: run:all
+
+  # Custom Environment Tasks
+  # ============================================================================
+
+  test:verbose:
+    desc: Run tests with verbose output and long tracebacks
+    deps: [build:firefox]
+    cmds:
+      - docker run --rm
+        -e PYTEST_VERBOSE=-vvv
+        -e PYTEST_TRACEBACK=long
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:firefox
+
+  test:no-colors:
+    desc: Run tests with NO_COLORS enabled
+    deps: [build:firefox]
+    cmds:
+      - docker run --rm
+        -e NO_COLORS=1
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:firefox
+
+  test:custom-display:
+    desc: Run tests with custom DISPLAY and resolution
+    deps: [build:firefox]
+    cmds:
+      - docker run --rm
+        -e DISPLAY=:100
+        -e XVFB_RESOLUTION=1920x1080x24
+        -v "$(pwd)/test-results:/app/test-results"
+        -v "$(pwd)/htmlreport:/app/htmlreport"
+        {{.IMAGE_NAME}}:firefox
+
+  # Development Tasks
+  # ============================================================================
+
+  shell:firefox:
+    desc: Start interactive shell in Firefox container
+    deps: [build:firefox]
+    cmds:
+      - docker run --rm -it
+        --entrypoint /bin/bash
+        {{.IMAGE_NAME}}:firefox
+
+  shell:chromium:
+    desc: Start interactive shell in Chromium container
+    deps: [build:chromium]
+    cmds:
+      - docker run --rm -it
+        --entrypoint /bin/bash
+        {{.IMAGE_NAME}}:chromium
+
+  inspect:
+    desc: Show browser installation in container (requires browser variant)
+    cmds:
+      - docker run --rm
+        {{.IMAGE_NAME}}:{{.BROWSER | default "firefox"}}
+        .venv/bin/playwright show-browsers
+
+  # Cleanup Tasks
+  # ============================================================================
+
+  clean:
+    desc: Remove all built images
+    cmds:
+      - docker rmi {{.IMAGE_NAME}}:firefox-py{{.PYTHON_VERSION}} 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:firefox 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:chromium-py{{.PYTHON_VERSION}} 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:chromium 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:webkit-py{{.PYTHON_VERSION}} 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:webkit 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:all-py{{.PYTHON_VERSION}} 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:all 2>/dev/null || true
+      - docker rmi {{.IMAGE_NAME}}:latest 2>/dev/null || true
+      - echo "✓ Cleaned up all {{.IMAGE_NAME}} images"
+
+  clean:reports:
+    desc: Remove test results and HTML reports
+    cmds:
+      - rm -rf test-results/* htmlreport/*
+      - echo "✓ Cleaned up test reports"
+
+  clean:all:
+    desc: Remove all images and reports
+    cmds:
+      - task: clean
+      - task: clean:reports
+
+  # Information Tasks
+  # ============================================================================
+
+  list-images:
+    desc: List all built images
+    cmds:
+      - docker images | grep {{.IMAGE_NAME}} || echo "No {{.IMAGE_NAME}} images found"
+
+  size:
+    desc: Show image sizes for all variants
+    cmds:
+      - docker images {{.IMAGE_NAME}} --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+
+  help:
+    desc: Show detailed usage information
+    silent: true
+    cmds:
+      - |
+        echo "Playwright Docker Test Container - Task Automation"
+        echo ""
+        echo "Quick Start:"
+        echo "  task build:firefox          # Build Firefox variant (default)"
+        echo "  task run:firefox            # Run tests with Firefox"
+        echo "  task test:firefox           # Build + Run Firefox tests"
+        echo ""
+        echo "Chromium Variant:"
+        echo "  task build:chromium         # Build Chromium variant"
+        echo "  task run:chromium           # Run tests with Chromium"
+        echo "  task test:chromium          # Build + Run Chromium tests"
+        echo ""
+        echo "Webkit Variant:"
+        echo "  task build:webkit           # Build Webkit variant"
+        echo "  task run:webkit             # Run tests with Webkit"
+        echo "  task test:webkit            # Build + Run Webkit tests"
+        echo ""
+        echo "All Variants:"
+        echo "  task build:all              # Build all browser variants"
+        echo "  task test:all               # Build + test all variants"
+        echo ""
+        echo "Development:"
+        echo "  task shell:firefox          # Interactive shell in container"
+        echo "  task inspect BROWSER=firefox # Show browser installation"
+        echo ""
+        echo "Cleanup:"
+        echo "  task clean                  # Remove all built images"
+        echo "  task clean:all              # Remove images + reports"
+        echo ""
+        echo "For full list: task --list"
+
+  default:
+    desc: Show help (default task when running just 'task')
+    cmds:
+      - task: help
