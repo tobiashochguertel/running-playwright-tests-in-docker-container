@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Show build output for debugging
+      args:
+        BUILDKIT_PROGRESS: plain
     container_name: playwright-tests-runner
     init: true
     ipc: 'host'
@@ -12,9 +15,9 @@ services:
     extra_hosts:
       - hostmachine:host-gateway
       # - host.docker.internal:host-gateway
-    # Explicit command to run pytest with verbose output
-    # Can be overridden with: docker-compose run --rm playwright <args>
-    command: pytest -vv --tb=long tests/
+    # Command defined in Dockerfile CMD - cleaner separation
+    # Override with: docker-compose run --rm playwright <args>
+    # Example: docker-compose run --rm playwright -vv tests/test_google.py
     environment:
       PLAYWRIGHT_HEADLESS: 'true'
       # Ensure pytest output is not buffered (real-time log streaming)
@@ -23,12 +26,13 @@ services:
     # ports:
     #   - 3000:3000
     volumes:
-      # Tests are copied into image during build, not mounted from host
+      # Mount tests as read-only for development convenience
+      # Tests are also baked into image during build
       - ./tests:/app/tests:ro
       # Output directories for results and reports
       - ./test-results:/app/test-results
       - ./htmlreport:/app/htmlreport
     working_dir: /app
-    # Set timeout for test execution (default: no limit)
+    # Set timeout for test execution
     # Docker will kill container if tests take longer than this
-    stop_grace_period: 2m
+    stop_grace_period: 5m
