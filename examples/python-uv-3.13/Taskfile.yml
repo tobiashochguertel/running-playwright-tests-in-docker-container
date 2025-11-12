@@ -23,9 +23,53 @@ env:
   USER: $USER
 
 vars:
+  # Image configuration
   IMAGE_ORGANIZATION: '{{.USER}}'
   IMAGE_NAME: '{{.IMAGE_ORGANIZATION}}/playwright-test'
   PYTHON_VERSION: '3.13'
+
+  # ANSI Color Codes for help text
+  ## Colors:
+  # Dark Variants
+  COLOR_CYAN: '\033[36m'
+  COLOR_YELLOW: '\033[33m'
+  COLOR_GREEN: '\033[32m'
+  COLOR_MAGENTA: '\033[35m'
+  COLOR_BLUE: '\033[34m'
+  COLOR_RED: '\033[31m'
+  COLOR_WHITE: '\033[37m'
+  COLOR_GRAY: '\033[90m'
+  # Light Variants
+  COLOR_LIGHT_CYAN: '\033[96m'
+  COLOR_LIGHT_YELLOW: '\033[93m'
+  COLOR_LIGHT_GREEN: '\033[92m'
+  COLOR_LIGHT_MAGENTA: '\033[95m'
+  COLOR_LIGHT_BLUE: '\033[94m'
+  COLOR_LIGHT_RED: '\033[91m'
+  COLOR_LIGHT_WHITE: '\033[97m'
+  COLOR_LIGHT_GRAY: '\033[37m'
+  # Bold Dark Variants
+  COLOR_BOLD_CYAN: '\033[1;36m'
+  COLOR_BOLD_YELLOW: '\033[1;33m'
+  COLOR_BOLD_GREEN: '\033[1;32m'
+  COLOR_BOLD_MAGENTA: '\033[1;35m'
+  COLOR_BOLD_BLUE: '\033[1;34m'
+  COLOR_BOLD_RED: '\033[1;31m'
+  COLOR_BOLD_WHITE: '\033[1;37m'
+  COLOR_BOLD_GRAY: '\033[1;90m'
+  # Light Dark Variants
+  COLOR_BOLD_LIGHT_CYAN: '\033[1;96m'
+  COLOR_BOLD_LIGHT_YELLOW: '\033[1;93m'
+  COLOR_BOLD_LIGHT_GREEN: '\033[1;92m'
+  COLOR_BOLD_LIGHT_MAGENTA: '\033[1;95m'
+  COLOR_BOLD_LIGHT_BLUE: '\033[1;94m'
+  COLOR_BOLD_LIGHT_RED: '\033[1;91m'
+  COLOR_BOLD_LIGHT_WHITE: '\033[1;97m'
+  COLOR_BOLD_LIGHT_GRAY: '\033[1;37m'
+  # Modifiers
+  COLOR_DIM: '{{.COLOR_GRAY}}'
+  COLOR_BOLD: '\033[1m'
+  COLOR_RESET: '\033[0m'
 
 tasks:
   debug:
@@ -35,6 +79,65 @@ tasks:
         echo "IMAGE_ORGANIZATION: {{.IMAGE_ORGANIZATION}}"
         echo "IMAGE_NAME: {{.IMAGE_NAME}}"
         echo "PYTHON_VERSION: {{.PYTHON_VERSION}}"
+
+  debug:colors:
+    desc: |
+      List all colors available in 256 color mode with their codes.
+
+      References:
+        - https://colors.sh/
+        - https://stackoverflow.com/a/33206814/2131390
+        - https://jafrog.com/2013/11/23/colors-in-terminal.html
+    cmds:
+      - |
+        for code in {0..255}
+          do echo -e "\e[38;5;${code}m"'\\e[38;5;'"$code"m"\e[0m"
+        done
+
+  debug:colors:basic-8:
+    desc: |
+      List all colors available in basic 8-color mode with their codes.
+
+      References:
+        - https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124?permalink_comment_id=5414733#gistcomment-5414733
+    cmds:
+      - |
+        for x in {0..5}; do echo --- && for z in 0 10 60 70; do for y in {30..37}; do y=$((y + z)) && printf '\e[%d;%dm%-12s\e[0m' "$x" "$y" "$(printf ' \\e[%d;%dm] ' "$x" "$y")" && printf ' '; done && printf '\n'; done; done
+
+  debug:colors:with-names:
+    desc: |
+      List some colors with names (name follows a pattern)
+
+      References:
+        - https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124?permalink_comment_id=5132462#gistcomment-5132462
+    cmds:
+      - |
+        printf "\e[0;30mBlack\n"
+        printf "\e[0;31mRed\n"
+        printf "\e[0;32mGreen\n"
+        printf "\e[0;33mYellow\n"
+        printf "\e[0;34mBlue\n"
+        printf "\e[0;35mPurple\n"
+        printf "\e[0;36mCyan\n"
+        printf "\e[0;37mWhite\n"
+
+        printf "\e[1;30mbold Black\n"
+        printf "\e[1;31mbold Red\n"
+        printf "\e[1;32mbold Green\n"
+        printf "\e[1;33mbold Yellow\n"
+        printf "\e[1;34mbold Blue\n"
+        printf "\e[1;35mbold Purple\n"
+        printf "\e[1;36mbold Cyan\n"
+        printf "\e[1;37mbold White\n"
+
+        printf "\e[0;90mhigh intensity Black\n"
+        printf "\e[0;91mhigh intensity Red\n"
+        printf "\e[0;92mhigh intensity Green\n"
+        printf "\e[0;93mhigh intensity Yellow\n"
+        printf "\e[0;94mhigh intensity Blue\n"
+        printf "\e[0;95mhigh intensity Purple\n"
+        printf "\e[0;96mhigh intensity Cyan\n"
+        printf "\e[0;97mhigh intensity White\n"
 
   buildx:create:
     desc: Create and use Docker buildx builder for multi-platform builds
@@ -346,38 +449,142 @@ tasks:
     silent: true
     cmds:
       - |
-        echo "Playwright Docker Test Container - Task Automation"
-        echo ""
-        echo "Quick Start:"
-        echo "  task build:firefox          # Build Firefox variant (default)"
-        echo "  task run:firefox            # Run tests with Firefox"
-        echo "  task test:firefox           # Build + Run Firefox tests"
-        echo ""
-        echo "Chromium Variant:"
-        echo "  task build:chromium         # Build Chromium variant"
-        echo "  task run:chromium           # Run tests with Chromium"
-        echo "  task test:chromium          # Build + Run Chromium tests"
-        echo ""
-        echo "Webkit Variant:"
-        echo "  task build:webkit           # Build Webkit variant"
-        echo "  task run:webkit             # Run tests with Webkit"
-        echo "  task test:webkit            # Build + Run Webkit tests"
-        echo ""
-        echo "All Variants:"
-        echo "  task build:all              # Build all browser variants"
-        echo "  task test:all               # Build + test all variants"
-        echo ""
-        echo "Development:"
-        echo "  task shell:firefox          # Interactive shell in container"
-        echo "  task inspect BROWSER=firefox # Show browser installation"
-        echo ""
-        echo "Cleanup:"
-        echo "  task clean                  # Remove all built images"
-        echo "  task clean:all              # Remove images + reports"
-        echo ""
-        echo "For full list: task --list"
+        echo -e "$(cat <<'EOF'
+        {{.COLOR_BOLD_CYAN}}╔════════════════════════════════════════════════════════════════╗{{.COLOR_RESET}}
+        {{.COLOR_BOLD_CYAN}}║  {{.COLOR_BOLD_YELLOW}}Playwright Docker Test Container{{.COLOR_BOLD_CYAN}} - Task Automation            ║{{.COLOR_RESET}}
+        {{.COLOR_BOLD_CYAN}}╚════════════════════════════════════════════════════════════════╝{{.COLOR_RESET}}
+
+        {{.COLOR_BOLD_GREEN}}📦 Quick Start:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          {{.COLOR_LIGHT_GREEN}}# Build Firefox variant (default){{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            # Run tests with Firefox
+          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           # Build + Run Firefox tests
+
+        {{.COLOR_BOLD_MAGENTA}}🦊 Firefox Variant:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          # Build Firefox image
+          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            # Run tests with Firefox
+          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           # Build + test Firefox
+
+        {{.COLOR_BOLD_BLUE}}🌐 Chromium Variant:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task build:chromium{{.COLOR_RESET}}         # Build Chromium image
+          {{.COLOR_BOLD_WHITE}}task run:chromium{{.COLOR_RESET}}           # Run tests with Chromium
+          {{.COLOR_BOLD_WHITE}}task test:chromium{{.COLOR_RESET}}          # Build + test Chromium
+
+        {{.COLOR_BOLD_CYAN}}🧪 WebKit Variant:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task build:webkit{{.COLOR_RESET}}           # Build WebKit image
+          {{.COLOR_BOLD_WHITE}}task run:webkit{{.COLOR_RESET}}             # Run tests with WebKit
+          {{.COLOR_BOLD_WHITE}}task test:webkit{{.COLOR_RESET}}            # Build + test WebKit
+
+        {{.COLOR_BOLD_YELLOW}}🚀 All Variants:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task build:all{{.COLOR_RESET}}              # Build all browser variants
+          {{.COLOR_BOLD_WHITE}}task test:all{{.COLOR_RESET}}               # Build + test all variants
+
+        {{.COLOR_BOLD_GREEN}}🐳 Docker Compose:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:up{{.COLOR_RESET}}             # Start tests with docker-compose
+          {{.COLOR_BOLD_WHITE}}task compose:down{{.COLOR_RESET}}           # Stop and remove containers
+          {{.COLOR_BOLD_WHITE}}task compose:logs{{.COLOR_RESET}}           # Show container logs
+          {{.COLOR_BOLD_WHITE}}task compose:firefox{{.COLOR_RESET}}        # Run Firefox profile
+          {{.COLOR_BOLD_WHITE}}task compose:chromium{{.COLOR_RESET}}       # Run Chromium profile
+          {{.COLOR_BOLD_WHITE}}task compose:webkit{{.COLOR_RESET}}         # Run WebKit profile
+
+        {{.COLOR_BOLD_CYAN}}🔧 Development:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task shell:firefox{{.COLOR_RESET}}            # Interactive shell in container
+          {{.COLOR_BOLD_WHITE}}task inspect BROWSER=firefox{{.COLOR_RESET}}  # Show browser installation
+
+        {{.COLOR_BOLD_RED}}🧹 Cleanup:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task clean{{.COLOR_RESET}}                  # Remove all built images
+          {{.COLOR_BOLD_WHITE}}task clean:reports{{.COLOR_RESET}}          # Remove test reports
+          {{.COLOR_BOLD_WHITE}}task clean:all{{.COLOR_RESET}}              # Remove images + reports
+
+        {{.COLOR_BOLD_YELLOW}}📊 Information:{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task list-images{{.COLOR_RESET}}            # List all built images
+          {{.COLOR_BOLD_WHITE}}task size{{.COLOR_RESET}}                   # Show image sizes
+
+        {{.COLOR_DIM}}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{{.COLOR_RESET}}
+        {{.COLOR_BOLD_WHITE}}For full list:{{.COLOR_RESET}} task --list
+        {{.COLOR_BOLD_WHITE}}For task info:{{.COLOR_RESET}} task --summary <task-name>
+        EOF
+        )"
 
   default:
     desc: Show help (default task when running just 'task')
     cmds:
       - task: help
+
+  # ============================================================================
+  # Docker Compose Tasks
+  # ============================================================================
+
+  compose:up:
+    desc: Start tests using docker-compose (firefox profile - default)
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose up --abort-on-container-exit
+
+  compose:up:firefox:
+    desc: Start tests using docker-compose firefox profile
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose up --abort-on-container-exit
+
+  compose:up:chromium:
+    desc: Start tests using docker-compose chromium profile
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose --profile chromium up --abort-on-container-exit
+
+  compose:up:webkit:
+    desc: Start tests using docker-compose webkit profile
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose --profile webkit up --abort-on-container-exit
+
+  compose:up:all:
+    desc: Start tests using docker-compose all-browsers profile
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose --profile all up --abort-on-container-exit
+
+  compose:firefox:
+    desc: Shorthand for compose:up:firefox
+    cmds:
+      - task: compose:up:firefox
+
+  compose:chromium:
+    desc: Shorthand for compose:up:chromium
+    cmds:
+      - task: compose:up:chromium
+
+  compose:webkit:
+    desc: Shorthand for compose:up:webkit
+    cmds:
+      - task: compose:up:webkit
+
+  compose:build:
+    desc: Build docker-compose images
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose build
+
+  compose:down:
+    desc: Stop and remove docker-compose containers
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose down
+
+  compose:logs:
+    desc: Show docker-compose logs (follow mode)
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose logs -f
+
+  compose:ps:
+    desc: Show docker-compose container status
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose ps
+
+  compose:restart:
+    desc: Restart docker-compose containers
+    dir: '{{.TASKFILE_DIR}}'
+    cmds:
+      - docker-compose restart

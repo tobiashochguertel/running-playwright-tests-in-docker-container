@@ -24,3 +24,7 @@ dist/
 
 # VS Code
 .vscode/
+
+# go-task
+**/.task/checksum
+**/.task/checksum/

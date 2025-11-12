@@ -11,23 +11,43 @@ class TestGoogleHomepage:
     async def test_google_homepage_loads(self, page: Page):
         """Test that Google homepage loads and displays search box."""
         # Use 'load' instead of 'networkidle' - faster and sufficient for most cases
-        await page.goto("https://www.google.de", wait_until="load")
+        await page.goto("https://www.google.com", wait_until="load", timeout=30000)
+
+        # Handle cookie consent if present (non-blocking)
+        try:
+            # Try to accept cookies if dialog appears
+            cookie_button = page.locator("button:has-text('Accept all'), button:has-text('Alle akzeptieren')")
+            if await cookie_button.count() > 0:
+                await cookie_button.first.click(timeout=2000)
+                await page.wait_for_timeout(500)
+        except Exception:
+            pass  # Cookie dialog not present or already accepted
 
         # Verify page title contains 'Google'
         title = await page.title()
         assert "Google" in title
 
-        # Verify search box is visible
-        search_box = page.locator("textarea[aria-label='Suche']")
-        assert await search_box.is_visible()
+        # Verify search box is visible (multiple possible selectors)
+        search_box = page.locator("textarea[name='q'], input[name='q'], textarea[aria-label*='Search']")
+        await search_box.first.wait_for(state="visible", timeout=10000)
+        assert await search_box.first.is_visible()
 
     @pytest.mark.asyncio
     async def test_google_search_button_visible(self, page: Page):
         """Test that Google search button is visible on homepage."""
-        await page.goto("https://www.google.de", wait_until="load")
+        await page.goto("https://www.google.com", wait_until="load", timeout=30000)
 
-        # Find search buttons
-        search_button = page.locator("button:has-text('Google Suche')")
+        # Handle cookie consent if present
+        try:
+            cookie_button = page.locator("button:has-text('Accept all'), button:has-text('Alle akzeptieren')")
+            if await cookie_button.count() > 0:
+                await cookie_button.first.click(timeout=2000)
+                await page.wait_for_timeout(500)
+        except Exception:
+            pass
+
+        # Find search buttons (multiple possible text variations)
+        search_button = page.locator("input[value='Google Search'], input[value='Google Suche'], button[aria-label*='Google Search']")
 
         # Verify button is in the DOM
         count = await search_button.count()
@@ -36,23 +56,42 @@ class TestGoogleHomepage:
     @pytest.mark.asyncio
     async def test_google_has_logo(self, page: Page):
         """Test that Google logo is visible on the homepage."""
-        await page.goto("https://www.google.de", wait_until="load")
+        await page.goto("https://www.google.com", wait_until="load", timeout=30000)
 
-        # Google logo is an image with specific alt text
-        logo = page.locator("img[alt='Google']")
+        # Handle cookie consent if present
+        try:
+            cookie_button = page.locator("button:has-text('Accept all'), button:has-text('Alle akzeptieren')")
+            if await cookie_button.count() > 0:
+                await cookie_button.first.click(timeout=2000)
+                await page.wait_for_timeout(500)
+        except Exception:
+            pass
 
-        assert await logo.is_visible()
+        # Google logo is an image with specific alt text or in header
+        logo = page.locator("img[alt='Google'], img[alt*='Google'], header img")
+        await logo.first.wait_for(state="visible", timeout=10000)
+        assert await logo.first.is_visible()
 
     @pytest.mark.asyncio
     async def test_google_footer_links_present(self, page: Page):
         """Test that footer links are present on Google homepage."""
-        await page.goto("https://www.google.de", wait_until="load")
+        await page.goto("https://www.google.com", wait_until="load", timeout=30000)
 
-        # Look for footer links (Über Google, Datenschutz, etc.)
-        footer = page.locator("footer")
-        assert await footer.is_visible()
+        # Handle cookie consent if present
+        try:
+            cookie_button = page.locator("button:has-text('Accept all'), button:has-text('Alle akzeptieren')")
+            if await cookie_button.count() > 0:
+                await cookie_button.first.click(timeout=2000)
+                await page.wait_for_timeout(500)
+        except Exception:
+            pass
+
+        # Look for footer links (About, Privacy, etc.)
+        footer = page.locator("footer, div[role='contentinfo']")
+        await footer.first.wait_for(state="visible", timeout=10000)
+        assert await footer.first.is_visible()
 
         # Check for at least one link in footer
-        links = footer.locator("a")
+        links = footer.first.locator("a")
         count = await links.count()
         assert count > 0, "No links found in footer"

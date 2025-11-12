@@ -29,14 +29,17 @@ class TestGitHubHomepage:
     @pytest.mark.asyncio
     async def test_github_search_box_visible(self, page: Page):
         """Test that GitHub search box is visible on homepage."""
-        await page.goto("https://github.com", wait_until="load")
+        await page.goto("https://github.com", wait_until="load", timeout=30000)
 
-        # GitHub search input
-        search_input = page.locator("input[placeholder*='Search']")
+        # GitHub search input (may be in different locations depending on auth state)
+        search_input = page.locator("input[name='q'], input[placeholder*='Search'], button[aria-label*='Search']")
 
-        # Check if search input exists and is visible
-        if await search_input.count() > 0:
-            assert await search_input.is_visible()
+        # Wait for at least one search element to be present
+        await search_input.first.wait_for(state="attached", timeout=10000)
+
+        # Check if search input exists
+        count = await search_input.count()
+        assert count > 0, "Search element not found"
 
     @pytest.mark.asyncio
     async def test_github_has_logo(self, page: Page):
@@ -51,25 +54,30 @@ class TestGitHubHomepage:
     @pytest.mark.asyncio
     async def test_github_sign_in_button_visible(self, page: Page):
         """Test that Sign In button is visible on GitHub homepage."""
-        await page.goto("https://github.com", wait_until="load")
+        await page.goto("https://github.com", wait_until="load", timeout=30000)
 
-        # Look for Sign In button (may vary in text)
-        sign_in_button = page.locator("a:has-text('Sign in')")
+        # Look for Sign In button (may vary in text and element type)
+        sign_in_button = page.locator("a:has-text('Sign in'), a:has-text('Sign up'), a[href='/login']")
+
+        # Wait for auth-related elements to load
+        await sign_in_button.first.wait_for(state="attached", timeout=10000)
 
         # Verify button exists
         count = await sign_in_button.count()
-        assert count > 0, "Sign in button not found"
+        assert count > 0, "Sign in/Sign up button not found"
 
     @pytest.mark.asyncio
     async def test_github_footer_visible(self, page: Page):
         """Test that GitHub footer is visible on the homepage."""
-        await page.goto("https://github.com", wait_until="load")
+        await page.goto("https://github.com", wait_until="load", timeout=30000)
 
         # GitHub footer
-        footer = page.locator("footer")
+        footer = page.locator("footer, div[role='contentinfo']")
 
         # Scroll to bottom to ensure footer is in viewport
         await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        await page.wait_for_timeout(500)  # Wait for scroll to complete
 
-        # Footer might not always be visible, but should exist
-        assert await footer.count() > 0
+        # Footer should exist and be visible after scroll
+        await footer.first.wait_for(state="visible", timeout=5000)
+        assert await footer.first.is_visible()

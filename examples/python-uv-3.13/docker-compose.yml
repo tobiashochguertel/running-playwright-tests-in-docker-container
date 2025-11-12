@@ -66,7 +66,8 @@ services:
       BROWSER: ${BROWSER:-firefox}
 
       # Display configuration
-      DISPLAY: ${DISPLAY:-:99}
+      # NOTE: Explicitly set to :99 to avoid inheriting host DISPLAY (e.g., "ssh-askpass" on macOS)
+      DISPLAY: ':99'
       XVFB_RESOLUTION: ${XVFB_RESOLUTION:-1280x1024x24}
 
       # Pytest configuration
