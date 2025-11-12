@@ -455,53 +455,54 @@ tasks:
         {{.COLOR_BOLD_CYAN}}╚════════════════════════════════════════════════════════════════╝{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_GREEN}}📦 Quick Start:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          {{.COLOR_LIGHT_GREEN}}# Build Firefox variant (default){{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            # Run tests with Firefox
-          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           # Build + Run Firefox tests
+          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          {{.COLOR_GRAY}}# Build Firefox variant (default){{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            {{.COLOR_GRAY}}# Run tests with Firefox{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Build + Run Firefox tests{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_MAGENTA}}🦊 Firefox Variant:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          # Build Firefox image
-          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            # Run tests with Firefox
-          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           # Build + test Firefox
+          {{.COLOR_BOLD_WHITE}}task build:firefox{{.COLOR_RESET}}          {{.COLOR_GRAY}}# Build Firefox image{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task run:firefox{{.COLOR_RESET}}            {{.COLOR_GRAY}}# Run tests with Firefox{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task test:firefox{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Build + test Firefox{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_BLUE}}🌐 Chromium Variant:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task build:chromium{{.COLOR_RESET}}         # Build Chromium image
-          {{.COLOR_BOLD_WHITE}}task run:chromium{{.COLOR_RESET}}           # Run tests with Chromium
-          {{.COLOR_BOLD_WHITE}}task test:chromium{{.COLOR_RESET}}          # Build + test Chromium
+          {{.COLOR_BOLD_WHITE}}task build:chromium{{.COLOR_RESET}}         {{.COLOR_GRAY}}# Build Chromium image{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task run:chromium{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Run tests with Chromium{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task test:chromium{{.COLOR_RESET}}          {{.COLOR_GRAY}}# Build + test Chromium{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_CYAN}}🧪 WebKit Variant:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task build:webkit{{.COLOR_RESET}}           # Build WebKit image
-          {{.COLOR_BOLD_WHITE}}task run:webkit{{.COLOR_RESET}}             # Run tests with WebKit
-          {{.COLOR_BOLD_WHITE}}task test:webkit{{.COLOR_RESET}}            # Build + test WebKit
+          {{.COLOR_BOLD_WHITE}}task build:webkit{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Build WebKit image{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task run:webkit{{.COLOR_RESET}}             {{.COLOR_GRAY}}# Run tests with WebKit{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task test:webkit{{.COLOR_RESET}}            {{.COLOR_GRAY}}# Build + test WebKit{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_YELLOW}}🚀 All Variants:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task build:all{{.COLOR_RESET}}              # Build all browser variants
-          {{.COLOR_BOLD_WHITE}}task test:all{{.COLOR_RESET}}               # Build + test all variants
+          {{.COLOR_BOLD_WHITE}}task build:all{{.COLOR_RESET}}              {{.COLOR_GRAY}}# Build all browser variants{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task test:all{{.COLOR_RESET}}               {{.COLOR_GRAY}}# Build + test all variants{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_GREEN}}🐳 Docker Compose:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task compose:up{{.COLOR_RESET}}             # Start tests with docker-compose
-          {{.COLOR_BOLD_WHITE}}task compose:down{{.COLOR_RESET}}           # Stop and remove containers
-          {{.COLOR_BOLD_WHITE}}task compose:logs{{.COLOR_RESET}}           # Show container logs
-          {{.COLOR_BOLD_WHITE}}task compose:firefox{{.COLOR_RESET}}        # Run Firefox profile
-          {{.COLOR_BOLD_WHITE}}task compose:chromium{{.COLOR_RESET}}       # Run Chromium profile
-          {{.COLOR_BOLD_WHITE}}task compose:webkit{{.COLOR_RESET}}         # Run WebKit profile
+          {{.COLOR_BOLD_WHITE}}task compose:up{{.COLOR_RESET}}             {{.COLOR_GRAY}}# Start tests with docker-compose{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:down{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Stop and remove containers{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:logs{{.COLOR_RESET}}           {{.COLOR_GRAY}}# Show container logs{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:firefox{{.COLOR_RESET}}        {{.COLOR_GRAY}}# Run Firefox profile{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:chromium{{.COLOR_RESET}}       {{.COLOR_GRAY}}# Run Chromium profile{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task compose:webkit{{.COLOR_RESET}}         {{.COLOR_GRAY}}# Run WebKit profile{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_CYAN}}🔧 Development:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task shell:firefox{{.COLOR_RESET}}            # Interactive shell in container
-          {{.COLOR_BOLD_WHITE}}task inspect BROWSER=firefox{{.COLOR_RESET}}  # Show browser installation
+          {{.COLOR_BOLD_WHITE}}task shell:firefox{{.COLOR_RESET}}            {{.COLOR_GRAY}}# Interactive shell in container{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task inspect BROWSER=firefox{{.COLOR_RESET}}  {{.COLOR_GRAY}}# Show browser installation{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_RED}}🧹 Cleanup:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task clean{{.COLOR_RESET}}                  # Remove all built images
-          {{.COLOR_BOLD_WHITE}}task clean:reports{{.COLOR_RESET}}          # Remove test reports
-          {{.COLOR_BOLD_WHITE}}task clean:all{{.COLOR_RESET}}              # Remove images + reports
+          {{.COLOR_BOLD_WHITE}}task clean{{.COLOR_RESET}}                  {{.COLOR_GRAY}}# Remove all built images{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task clean:reports{{.COLOR_RESET}}          {{.COLOR_GRAY}}# Remove test reports{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task clean:all{{.COLOR_RESET}}              {{.COLOR_GRAY}}# Remove images + reports{{.COLOR_RESET}}
 
         {{.COLOR_BOLD_YELLOW}}📊 Information:{{.COLOR_RESET}}
-          {{.COLOR_BOLD_WHITE}}task list-images{{.COLOR_RESET}}            # List all built images
-          {{.COLOR_BOLD_WHITE}}task size{{.COLOR_RESET}}                   # Show image sizes
+          {{.COLOR_BOLD_WHITE}}task list-images{{.COLOR_RESET}}            {{.COLOR_GRAY}}# List all built images{{.COLOR_RESET}}
+          {{.COLOR_BOLD_WHITE}}task size{{.COLOR_RESET}}                   {{.COLOR_GRAY}}# Show image sizes{{.COLOR_RESET}}
 
-        {{.COLOR_DIM}}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{{.COLOR_RESET}}
-        {{.COLOR_BOLD_WHITE}}For full list:{{.COLOR_RESET}} task --list
-        {{.COLOR_BOLD_WHITE}}For task info:{{.COLOR_RESET}} task --summary <task-name>
+        {{.COLOR_MAGENTA}}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{{.COLOR_RESET}}
+
+        {{.COLOR_GRAY}}For full list:{{.COLOR_RESET}} {{.COLOR_BOLD_WHITE}}task --list{{.COLOR_RESET}}
+        {{.COLOR_GRAY}}For task info:{{.COLOR_RESET}} {{.COLOR_BOLD_WHITE}}task --summary <task-name>{{.COLOR_RESET}}\n
         EOF
         )"
 
