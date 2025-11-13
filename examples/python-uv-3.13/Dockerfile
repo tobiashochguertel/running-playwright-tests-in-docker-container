@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
   build-essential \
+  x11-utils \
   && rm -rf /var/lib/apt/lists/*
 
 # Verify installation with version output

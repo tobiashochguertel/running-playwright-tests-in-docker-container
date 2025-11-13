@@ -139,9 +139,13 @@ tasks:
         printf "\e[0;96mhigh intensity Cyan\n"
         printf "\e[0;97mhigh intensity White\n"
 
+  # - export DOCKER_HOST="unix://$HOME/.colima/docker/docker.sock"
+  # - export DOCKER_HOST="unix://$HOME/.colima/default/incus.sock"
+  # - echo $DOCKER_HOST
   buildx:create:
     desc: Create and use Docker buildx builder for multi-platform builds
     cmds:
+      # - docker buildx ls
       - docker buildx create
         --name mybuilder --use
         --driver docker-container

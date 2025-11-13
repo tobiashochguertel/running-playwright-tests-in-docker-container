@@ -55,7 +55,7 @@ print_indented() {
 # Print header
 print_header() {
   printf "%s%s╔════════════════════════════════════════════════════════════════╗%s\n" "$CYAN" "$BOLD" "$NC"
-  printf "%s%s║       Playwright Test Container - Environment Check           ║%s\n" "$CYAN" "$BOLD" "$NC"
+  printf "%s%s║       Playwright Test Container - Environment Check            ║%s\n" "$CYAN" "$BOLD" "$NC"
   printf "%s%s╚════════════════════════════════════════════════════════════════╝%s\n" "$CYAN" "$BOLD" "$NC"
   printf "\n"
 }
@@ -117,7 +117,7 @@ printf "\n"
 if [[ -d "/app/tests" ]]; then
   test_count=0
   while IFS= read -r -d '' _; do
-    ((test_count++))
+    test_count=$((test_count + 1))
   done < <(find /app/tests \( -name "test_*.py" -o -name "*_test.py" \) -print0 2>/dev/null)
   printf "%s✓ Tests directory found: %d test files%s\n" "$GREEN" "$test_count" "$NC"
 else
@@ -151,7 +151,7 @@ while ! xdpyinfo -display "$DISPLAY" >/dev/null 2>&1; do
     exit 1
   fi
   sleep 0.5
-  ((XVFB_ELAPSED++))
+  XVFB_ELAPSED=$((XVFB_ELAPSED + 1))
 done
 
 printf "%s✓ Xvfb ready (PID: %d)%s\n" "$GREEN" "$XVFB_PID" "$NC"
@@ -181,14 +181,14 @@ if [[ $# -eq 0 ]]; then
   "${PYTEST_CMD[@]}"
   EXIT_CODE=$?
 else
-  # Check if first argument is pytest-related
-  if [[ "$1" == "pytest"* ]] || [[ "$1" == "-"* ]]; then
+  # Check if first argument is pytest-related or a test path
+  if [[ "$1" == "pytest"* ]] || [[ "$1" == "-"* ]] || [[ "$1" == "tests/"* ]] || [[ "$1" == "tests" ]]; then
     # Run pytest directly from venv with provided arguments
     .venv/bin/pytest "$@"
     EXIT_CODE=$?
   else
     # For other commands, try to run from venv
-    .venv/bin/"$*"
+    .venv/bin/"$@"
     EXIT_CODE=$?
   fi
 fi
