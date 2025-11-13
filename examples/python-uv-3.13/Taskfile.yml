@@ -154,9 +154,9 @@ tasks:
       - docker buildx ls
     status:
       # Get the builder named "mybuilder" if it exists
-      - docker buildx ls --format=json | jq -s '.[] | select(.Name == "mybuilder")'
+      - docker buildx ls --format=json | jq --exit-status -s '.[] | select(.Name == "mybuilder")'
       # Get the driver used by the builder and compare it with the `docker-container` driver
-      - docker buildx ls --format=json | jq -s '.[] | select(.Name == "mybuilder").Driver == "docker-container"'
+      - docker buildx ls --format=json | jq --exit-status -s '.[] | select(.Name == "mybuilder").Driver == "docker-container"'
 
   # Build Tasks
   # ============================================================================
@@ -182,11 +182,11 @@ tasks:
       # Get all built images
       # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
       # Get the images named "{{.IMAGE_NAME}}:latest" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "latest").Tag == "latest"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "latest").Tag == "latest"'
       # Get the images named "{{.IMAGE_NAME}}:firefox-py{{.PYTHON_VERSION}}" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox-py{{.PYTHON_VERSION}}").Tag == "firefox-py{{.PYTHON_VERSION}}"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox-py{{.PYTHON_VERSION}}").Tag == "firefox-py{{.PYTHON_VERSION}}"'
       # Get the images named "{{.IMAGE_NAME}}:firefox" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox").Tag == "firefox"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "firefox").Tag == "firefox"'
 
   build:chromium:
     desc: Build Docker image with Chromium browser
@@ -208,9 +208,9 @@ tasks:
       # Get all built images
       # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
       # Get the images named "{{.IMAGE_NAME}}:chromium-py{{.PYTHON_VERSION}}" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium-py{{.PYTHON_VERSION}}").Tag == "chromium-py{{.PYTHON_VERSION}}"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium-py{{.PYTHON_VERSION}}").Tag == "chromium-py{{.PYTHON_VERSION}}"'
       # Get the images named "{{.IMAGE_NAME}}:chromium" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium").Tag == "chromium"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "chromium").Tag == "chromium"'
 
   build:webkit:
     desc: Build Docker image with WebKit browser
@@ -232,9 +232,9 @@ tasks:
       # Get all built images
       # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
       # Get the images named "{{.IMAGE_NAME}}:webkit-py{{.PYTHON_VERSION}}" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit-py{{.PYTHON_VERSION}}").Tag == "webkit-py{{.PYTHON_VERSION}}"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit-py{{.PYTHON_VERSION}}").Tag == "webkit-py{{.PYTHON_VERSION}}"'
       # Get the images named "{{.IMAGE_NAME}}:webkit" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit").Tag == "webkit"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "webkit").Tag == "webkit"'
 
   build:all-browsers:
     desc: Build Docker image with all browsers (firefox, chromium, webkit)
@@ -256,9 +256,9 @@ tasks:
       # Get all built images
       # - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}")'
       # Get the images named "{{.IMAGE_NAME}}:all-py{{.PYTHON_VERSION}}" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all-py{{.PYTHON_VERSION}}").Tag == "all-py{{.PYTHON_VERSION}}"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all-py{{.PYTHON_VERSION}}").Tag == "all-py{{.PYTHON_VERSION}}"'
       # Get the images named "{{.IMAGE_NAME}}:all" if it exists
-      - docker images --all --format=json | jq -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all").Tag == "all"'
+      - docker images --all --format=json | jq --exit-status -s '.[] | select(.Repository == "{{.IMAGE_NAME}}") | select(.Tag == "all").Tag == "all"'
 
   build:all:
     desc: Build all browser variants (firefox, chromium, webkit, all-browsers)

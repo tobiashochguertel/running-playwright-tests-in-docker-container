@@ -188,7 +188,7 @@ else
     EXIT_CODE=$?
   else
     # For other commands, try to run from venv
-    .venv/bin/"$@"
+    .venv/bin/"$*"
     EXIT_CODE=$?
   fi
 fi
