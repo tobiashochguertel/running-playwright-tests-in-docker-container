@@ -48,7 +48,7 @@ services:
         UV_CACHE_REFRESH: ${UV_CACHE_REFRESH:-false}
         # Show build output for debugging
         BUILDKIT_PROGRESS: plain
-    image: playwright-test:firefox-py${PYTHON_VERSION:-3.13}
+    image: ${IMAGE_NAME:-${IMAGE_ORGANIZATION:-tobiashochgurtel}/playwright-test}:firefox-py${PYTHON_VERSION:-3.13}
     container_name: playwright-tests-runner
     init: true
     ipc: 'host'

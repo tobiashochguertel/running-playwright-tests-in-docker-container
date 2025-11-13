@@ -22,8 +22,8 @@ class TestGitHubHomepage:
         """Test that GitHub navigation menu is visible."""
         await page.goto("https://github.com", wait_until="load")
 
-        # Look for main navigation
-        nav = page.locator("nav")
+        # Look for main navigation (use specific aria-label to avoid multiple matches)
+        nav = page.locator("nav[aria-label='Global']")
         assert await nav.is_visible()
 
     @pytest.mark.asyncio
